@@ -8,17 +8,6 @@ using System.Threading;
 
 namespace ConsoleApplication
 {
-    public class Request 
-    {
-        public string Url {get;}
-        public int Value {get; set;}
-
-        public Request(string url) 
-        {
-            Url = url;
-        }
-    }
-
     public class Program
     {
         public static void Main(string[] args)
@@ -36,13 +25,29 @@ namespace ConsoleApplication
         private static async Task MainAsync()
         {
             Console.WriteLine($"Thread {ThreadId()}");
-            await WebApiRequests();
+            await HttpClientSamples.RunAsync();
             Console.WriteLine($"Thread {ThreadId()}");
         }
 
-        private static async Task WebApiRequests() 
+        private static Func<int> ThreadId => () => Thread.CurrentThread.ManagedThreadId;
+    }
+
+    public class HttpClientSamples
+    {
+        public class Request
         {
-            var requests = new List<Request> 
+            public string Url { get; }
+            public int Value { get; set; }
+
+            public Request(string url)
+            {
+                Url = url;
+            }
+        }
+
+        public static async Task RunAsync()
+        {
+            var requests = new List<Request>
             {
                 new Request("http://www.google.com"),
                 new Request("http://www.bing.com"),
@@ -53,19 +58,27 @@ namespace ConsoleApplication
             await Task.WhenAll(tasks);
         }
 
-        public static async Task<HttpResponseMessage> ProcessApiRequestAsync(Request request) 
+        public static async Task<HttpResponseMessage> ProcessApiRequestAsync(Request request)
         {
-            using(var httpClient = new HttpClient()) 
+            using (var httpClient = new HttpClient())
             {
                 Console.WriteLine($"Starting {request.Url} on thread {ThreadId()}");
 
                 var response = await httpClient.GetAsync(request.Url);
-                
+
                 Console.WriteLine($"End request {request.Url} on thread {ThreadId()}");
                 return response;
             }
         }
 
         private static Func<int> ThreadId => () => Thread.CurrentThread.ManagedThreadId;
+    }
+
+    public class CpuJobSamples
+    {
+        public static async Task RunAsync()
+        {
+
+        }
     }
 }
