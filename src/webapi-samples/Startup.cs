@@ -1,9 +1,10 @@
-using ConsoleApplication.Contollers;
+using webapi_samples.Contollers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using webapi_samples.services;
 
-namespace ConsoleApplication
+namespace webapi_samples
 {
     public class Startup
     {

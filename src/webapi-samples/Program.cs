@@ -3,14 +3,14 @@ using System.IO;
 using System.Threading;
 using Microsoft.AspNetCore.Hosting;
 
-namespace ConsoleApplication
+namespace webapi_samples
 {
     public class Program
     {
         public static void Main(string[] args)
         {
             var host = new WebHostBuilder()
-                .UseKestrel()
+                .UseKestrel(opt => opt.ThreadCount = 4)
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup>()
                 .Build();

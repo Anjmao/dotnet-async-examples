@@ -10,66 +10,67 @@ namespace ConsoleApplication
 {
     public class Program
     {
+        private static int ThreadId => Thread.CurrentThread.ManagedThreadId;
+
         public static void Main(string[] args)
         {
-            Console.WriteLine($"Start");
+            Console.WriteLine($"Start on thread {ThreadId}");
             var timer = new Stopwatch();
             timer.Start();
             MainAsync().GetAwaiter().GetResult();
             timer.Stop();
             TimeSpan ts = timer.Elapsed;
             string elapsedTime = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}";
-            Console.WriteLine($"End in {elapsedTime}");
+            Console.WriteLine($"End in {elapsedTime} of thread {ThreadId}");
         }
 
         private static async Task MainAsync()
         {
-            Console.WriteLine($"Thread {ThreadId()}");
-            await MixedSamples.RunAsync();
-            Console.WriteLine($"Thread {ThreadId()}");
-        }
+            //var operation = new CpuBoundOperation();
+            //await operation.RunAsync();
 
-        private static Func<int> ThreadId => () => Thread.CurrentThread.ManagedThreadId;
+            var mistakes = new CommonMistakesOperation();
+            mistakes.UsingThreadSleep();
+        }
     }
 
-    public class HttpClientSamples
+    public class IOBoundOperation
     {
-        public static async Task RunAsync()
+        public async Task RunAsync()
         {
             var requests = new List<Request>
             {
                 new Request("http://www.google.com"),
-                new Request("http://www.bing.com"),
-                new Request("http://www.yandex.com")
+                new Request("http://www.google.com")
             };
 
             var tasks = requests.Select(ProcessApiRequestAsync);
             await Task.WhenAll(tasks);
         }
 
-        public static async Task<HttpResponseMessage> ProcessApiRequestAsync(Request request)
+        private async Task<HttpResponseMessage> ProcessApiRequestAsync(Request request)
         {
             using (var httpClient = new HttpClient())
             {
-                Console.WriteLine($"Starting {request.Url} on thread {ThreadId()}");
+                Console.WriteLine($"Starting {request.Url} on thread {ThreadId}");
 
                 var response = await httpClient.GetAsync(request.Url);
 
-                Console.WriteLine($"End request {request.Url} on thread {ThreadId()}");
+                Console.WriteLine($"End request {request.Url} on thread {ThreadId}");
                 return response;
             }
         }
 
-        private static Func<int> ThreadId => () => Thread.CurrentThread.ManagedThreadId;
+        private int ThreadId => Thread.CurrentThread.ManagedThreadId;
     }
 
-    public class CpuJobSamples
+    public class CpuBoundOperation
     {
-        public static async Task RunAsync()
+        public async Task RunAsync()
         {
             var jobs = new List<Job>
             {
-                new Job("A", 1),
+                new Job("A", 3),
                 new Job("B", 2)
             };
 
@@ -77,63 +78,52 @@ namespace ConsoleApplication
             await Task.WhenAll(tasks);
         }
 
-        private static Task<bool> ProcessJobAsync(Job job)
+        private Task<bool> ProcessJobAsync(Job job)
         {
             return Task.Run(() =>
             {
-                Console.WriteLine($"Starting {job.Id} on thread {ThreadId()}");
+                throw new Exception("ups");
+                Console.WriteLine($"Starting {job.Id} on thread {ThreadId}");
                 var end = DateTime.Now + TimeSpan.FromSeconds(job.Seconds);
                 while (DateTime.Now < end) ;
-                Console.WriteLine($"Ended {job.Id} on thread {ThreadId()}");
+                Console.WriteLine($"Ended {job.Id} on thread {ThreadId}");
                 return true;
             });
         }
 
-        private static Func<int> ThreadId => () => Thread.CurrentThread.ManagedThreadId;
+        private int ThreadId => Thread.CurrentThread.ManagedThreadId;
     }
 
-    public class MixedSamples
+    public class CommonMistakesOperation
     {
-        public static async Task RunAsync()
+        public void WrongExceptionCatching() 
         {
-            var requests = new List<Request>
+            try 
             {
-                new Request("http://www.google.com"),
-                new Request("http://www.bing.com"),
-                new Request("http://www.yandex.com")
-            };
-
-            var tasks = requests.Select(ProcessRequestAsync);
-            await Task.WhenAll(tasks);
-        }
-
-        public static async Task<HttpResponseMessage> ProcessRequestAsync(Request request)
-        {
-            using (var httpClient = new HttpClient())
+                Task.Run(() => {
+                    throw new Exception("ups");
+                });
+            }
+            catch(Exception ex) 
             {
-                Console.WriteLine($"Starting {request.Url} on thread {ThreadId()}");
-
-                var response = await httpClient.GetAsync(request.Url);
-                var cpuJobResult = await ProcessJobAsync(new Job(request.Url, 2), response);
-
-                Console.WriteLine($"End request {request.Url} on thread {ThreadId()}");
-                return response;
+                Console.WriteLine(ex);
             }
         }
 
-        private static Task<bool> ProcessJobAsync(Job job, HttpResponseMessage rsp)
+        public void BlockingTask()
         {
-            return Task.Run(() =>
-            {
-                Console.WriteLine($"Starting cpu job {job.Id} on thread {ThreadId()} {rsp.StatusCode}");
-                var end = DateTime.Now + TimeSpan.FromSeconds(job.Seconds);
-                while (DateTime.Now < end) ;
-                Console.WriteLine($"Ended cpu job {job.Id} on thread {ThreadId()}");
-                return true;
+            Task<string> task = Task.Run(() => {
+                return $"Hello from another task with thread {ThreadId}";
             });
+            Console.WriteLine(task.Result);
         }
 
-        private static Func<int> ThreadId => () => Thread.CurrentThread.ManagedThreadId;
+        public void UsingThreadSleep()
+        {
+            Thread.Sleep(1000);
+        }
+
+        private int ThreadId => Thread.CurrentThread.ManagedThreadId;
     }
 
     public class Job
