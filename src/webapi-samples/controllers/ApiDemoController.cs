@@ -63,7 +63,7 @@ namespace ConsoleApplication.Contollers
         {
             using (var connection = GetConnection())
             {
-                var result = await connection.QueryAsync<User>("SELECT * FROM user LIMIT 0,10");
+                var result = await connection.QueryAsync<User>("SELECT * FROM user");
                 return result;
             }
         }
@@ -81,7 +81,7 @@ namespace ConsoleApplication.Contollers
         {
             using (var connection = GetConnection())
             {
-                var result = connection.Query<User>("SELECT * FROM user LIMIT 0,10");
+                var result = connection.Query<User>("SELECT * FROM user");
                 return result;
             }
         }
