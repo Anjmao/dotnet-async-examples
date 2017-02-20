@@ -13,19 +13,14 @@ namespace WebApiSamples.Contollers
         [Route("api/users")]
         public IEnumerable<User> Get()
         {
-            var result = _dataService.GetUsers();
-            var content = _dataService.GetWebContent(new Request("http://webcache.googleusercontent.com/search?q=cache:https://en.wikipedia.org/wiki/Main_Page"));
-            return result;
+            return _dataService.GetUsers();
         }
 
         [HttpGet]
         [Route("api/users/async")]
         public async Task<IEnumerable<User>> GetAsync()
         {
-            var usersTask = _dataService.GetUsersAsync();
-            var wikiTask = _dataService.GetWebContentAsync(new Request("http://webcache.googleusercontent.com/search?q=cache:https://en.wikipedia.org/wiki/Main_Page"));
-            var content = await wikiTask;
-            return await usersTask;
+            return await _dataService.GetUsersAsync();
         }
     }
 
