@@ -22,6 +22,16 @@ namespace WebApiSamples.Contollers
         {
             return await _dataService.GetUsersAsync();
         }
+
+        [HttpGet]
+        [Route("api/users/deadlock")]
+        public IEnumerable<User> Deadlock()
+        {
+            //AspNetSynchronizationContext
+            //HttpContext.Current
+            var users = _dataService.GetUsersAsync().Result;
+            return users;
+        }
     }
 
 }
