@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading;
 using Microsoft.AspNetCore.Hosting;
 
-namespace webapi_samples
+namespace WebApiSamples
 {
     public class Program
     {

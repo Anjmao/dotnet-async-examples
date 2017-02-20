@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using webapi_samples.services;
+using WebApiSamples.Services;
 
-namespace webapi_samples.Contollers
+namespace WebApiSamples.Contollers
 {
     public class DemoController : Controller
     {
@@ -14,6 +14,7 @@ namespace webapi_samples.Contollers
         public IEnumerable<User> Get()
         {
             var result = _dataService.GetUsers();
+            var content = _dataService.GetWebContent(new Request("http://webcache.googleusercontent.com/search?q=cache:https://en.wikipedia.org/wiki/Main_Page"));
             return result;
         }
 
@@ -21,8 +22,10 @@ namespace webapi_samples.Contollers
         [Route("api/users/async")]
         public async Task<IEnumerable<User>> GetAsync()
         {
-            var result = await _dataService.GetUsersAsync();
-            return result;
+            var usersTask = _dataService.GetUsersAsync();
+            var wikiTask = _dataService.GetWebContentAsync(new Request("http://webcache.googleusercontent.com/search?q=cache:https://en.wikipedia.org/wiki/Main_Page"));
+            var content = await wikiTask;
+            return await usersTask;
         }
     }
 

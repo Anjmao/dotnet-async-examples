@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 using MySQL.Data.EntityFrameworkCore.Extensions;
 
-namespace webapi_samples.services
+namespace WebApiSamples.Services
 {
     public class MyDataService
     {
