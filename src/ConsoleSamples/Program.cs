@@ -52,6 +52,12 @@ namespace ConsoleApplication
             //await samples.AwaitInOrder();
 
             //await samples.AwaitInParallel();
+
+            //samples.WrongExceptionCatching();
+
+            //samples.BlockingTask();
+
+            //samples.UsingThreadSleep();
         }
     }
 
@@ -192,70 +198,7 @@ namespace ConsoleApplication
             await Task.Delay(100);
             throw new Exception("Ups!");
         }
-    }
 
-    public class IOBoundOperation
-    {
-        public async Task RunAsync()
-        {
-            var requests = new List<Request>
-            {
-                new Request("http://www.google.com"),
-                new Request("http://www.google.com")
-            };
-
-            var tasks = requests.Select(ProcessApiRequestAsync);
-            await Task.WhenAll(tasks);
-        }
-
-        private async Task<HttpResponseMessage> ProcessApiRequestAsync(Request request)
-        {
-            using (var httpClient = new HttpClient())
-            {
-                Console.WriteLine($"Starting {request.Url} on thread {ThreadId}");
-
-                var response = await httpClient.GetAsync(request.Url);
-
-                Console.WriteLine($"End request {request.Url} on thread {ThreadId}");
-                return response;
-            }
-        }
-
-        private int ThreadId => Thread.CurrentThread.ManagedThreadId;
-    }
-
-    public class CpuBoundOperation
-    {
-        public async Task RunAsync()
-        {
-            var jobs = new List<Job>
-            {
-                new Job("A", 3),
-                new Job("B", 2)
-            };
-
-            var tasks = jobs.Select(ProcessJobAsync);
-            await Task.WhenAll(tasks);
-        }
-
-        private Task<bool> ProcessJobAsync(Job job)
-        {
-            return Task.Run(() =>
-            {
-                throw new Exception("ups");
-                Console.WriteLine($"Starting {job.Id} on thread {ThreadId}");
-                var end = DateTime.Now + TimeSpan.FromSeconds(job.Seconds);
-                while (DateTime.Now < end) ;
-                Console.WriteLine($"Ended {job.Id} on thread {ThreadId}");
-                return true;
-            });
-        }
-
-        private int ThreadId => Thread.CurrentThread.ManagedThreadId;
-    }
-
-    public class CommonMistakesOperation
-    {
         public void WrongExceptionCatching()
         {
             try
@@ -283,30 +226,6 @@ namespace ConsoleApplication
         public void UsingThreadSleep()
         {
             Thread.Sleep(1000);
-        }
-
-        private int ThreadId => Thread.CurrentThread.ManagedThreadId;
-    }
-
-    public class Job
-    {
-        public Job(string id, int time)
-        {
-            Id = id;
-            Seconds = time;
-        }
-        public string Id { get; }
-        public int Seconds { get; }
-    }
-
-    public class Request
-    {
-        public string Url { get; }
-        public int Value { get; set; }
-
-        public Request(string url)
-        {
-            Url = url;
         }
     }
 }
