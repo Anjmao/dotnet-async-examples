@@ -51,7 +51,25 @@ namespace ConsoleSamples
 
             //samples.WrongExceptionCatching();
 
-            var performance = new PerformanceSamples();
+            //samples.WrongExceptionCatching2();
+
+            //var result = await samples.FakeAsync();
+            //WriteLine($"{result}");
+
+
+            //var advanced = new AdvancedSamples();
+
+            //var result = await advanced.TaskCompletionSourceFormEvents();
+            //WriteLine($"Task completion source result: {result}");
+
+            //await advanced.CancellationTokenSource();
+
+            //await advanced.AwaitExtensions();
+
+            //await advanced.CustomAwaiter();
+
+
+            //var performance = new PerformanceSamples();
 
             //await performance.AwaitInLoop();
         }

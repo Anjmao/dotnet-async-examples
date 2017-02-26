@@ -165,5 +165,28 @@ namespace ConsoleSamples
                 Console.WriteLine(ex);
             }
         }
+
+        public void WrongExceptionCatching2()
+        {
+            try
+            {
+                AsyncVoid();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+        private async void AsyncVoid()
+        {
+            await Task.Delay(100);
+            throw new Exception("Void ups");
+        }
+
+        public Task<string> FakeAsync()
+        {
+            return Task.FromResult("So fake async");
+        }
     }
 }
