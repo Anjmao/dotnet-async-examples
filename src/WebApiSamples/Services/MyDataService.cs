@@ -52,33 +52,6 @@ namespace WebApiSamples.Services
                 return response;
             }
         }
-
-        public async Task SeedData()
-        {
-            using (var connection = GetDapperConnection())
-            {
-                for (var i = 0; i < 100; i++)
-                {
-                    await connection.ExecuteAsync("INSERT user(id, firstname, lastname) VALUES(@Id, @FirstName, @LastName)", new
-                    {
-                        Id = Guid.NewGuid(),
-                        FirstName = "Name" + i,
-                        LastName = "LastName" + i
-                    });
-                }
-            }
-        }
-    }
-
-    public class Job
-    {
-        public Job(string id, int time)
-        {
-            Id = id;
-            Seconds = time;
-        }
-        public string Id { get; }
-        public int Seconds { get; }
     }
 
     public class Request

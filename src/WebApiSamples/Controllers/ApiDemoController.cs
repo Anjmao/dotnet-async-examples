@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebApiSamples.Services;
 
+using static System.Console;
+using static System.Threading.Thread;
+
 namespace WebApiSamples.Contollers
 {
     public class DemoController : Controller
@@ -20,7 +23,11 @@ namespace WebApiSamples.Contollers
         [Route("api/users/async")]
         public async Task<IEnumerable<User>> GetAsync()
         {
-            return await _dataService.GetUsersAsync();
+            WriteLine($"Users start on thread {CurrentThread.ManagedThreadId}");
+            var result = await _dataService.GetUsersAsync();
+            WriteLine($"Users end on thread {CurrentThread.ManagedThreadId}");
+            WriteLine("---------------------");
+            return result;
         }
 
         [HttpGet]
