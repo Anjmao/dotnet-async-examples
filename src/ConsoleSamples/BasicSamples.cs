@@ -120,7 +120,7 @@ namespace ConsoleSamples
             task.Wait();
             WriteLine($"Ended on thread {ThreadId}");
         }
-
+        
         public async Task CatchAsyncExeption()
         {
             try
@@ -187,6 +187,11 @@ namespace ConsoleSamples
         public Task<string> FakeAsync()
         {
             return Task.FromResult("So fake async");
+        }
+
+        public Task<string> FakeAsync2()
+        {
+            return Task.Run(() => "One more fake async");
         }
     }
 }

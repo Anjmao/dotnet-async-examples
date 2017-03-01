@@ -56,6 +56,9 @@ namespace ConsoleSamples
             //var result = await samples.FakeAsync();
             //WriteLine($"{result}");
 
+            //var result = await samples.FakeAsync2();
+            //WriteLine($"{result}");
+
 
             //var advanced = new AdvancedSamples();
 
