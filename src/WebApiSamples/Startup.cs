@@ -18,9 +18,10 @@ namespace WebApiSamples
             IApplicationBuilder app,
             ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddConsole();
+            //loggerFactory.AddDebug();
             app.UseDeveloperExceptionPage();
             app.UseMvc();
-            //loggerFactory.AddFile("Logs/myapp-{Date}.txt", LogLevel.Information);
         }
     }
 }

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebApiSamples.Services;
@@ -23,11 +25,24 @@ namespace WebApiSamples.Contollers
         [Route("api/users/async")]
         public async Task<IEnumerable<User>> GetAsync()
         {
-            WriteLine($"Users start on thread {CurrentThread.ManagedThreadId}");
             var result = await _dataService.GetUsersAsync();
-            WriteLine($"Users end on thread {CurrentThread.ManagedThreadId}");
-            WriteLine("---------------------");
             return result;
+        }
+
+        [HttpGet]
+        [Route("api/long")]
+        public string LongTask()
+        {
+            Thread.Sleep(1000);
+            return "Long task done";
+        }
+
+        [HttpGet]
+        [Route("api/long/async")]
+        public async Task<string> LongAsyncTask()
+        {
+            await Task.Delay(1000);
+            return "Long task done";
         }
 
         [HttpGet]

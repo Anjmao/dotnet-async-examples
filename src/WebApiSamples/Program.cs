@@ -10,7 +10,7 @@ namespace WebApiSamples
         public static void Main(string[] args)
         {
             var host = new WebHostBuilder()
-                .UseKestrel(opt => opt.ThreadCount = 4)
+                .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup>()
                 .Build();

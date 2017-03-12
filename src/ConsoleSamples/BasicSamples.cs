@@ -193,5 +193,29 @@ namespace ConsoleSamples
         {
             return Task.Run(() => "One more fake async");
         }
+
+        public async Task VeryBadBadBetterBestTaskUsage()
+        {
+            // very bad
+            var thread = new Thread(new ThreadStart(ThreadStartMethod));
+            thread.Start();
+
+            // bad
+            var taskFromCtr = new Task(() => Console.WriteLine($"Starting new task with ctr. Thread id {ThreadId}"));
+            taskFromCtr.Start();
+
+            // better
+            var taskFromFactory = Task.Factory.StartNew(() => Console.WriteLine($"Starting task from factory {ThreadId}"));
+
+            // best
+            var taskFromRun = Task.Run(() => Console.WriteLine($"Starting task from run {ThreadId}"));
+
+            await Task.WhenAll(taskFromCtr, taskFromFactory, taskFromRun);
+        }
+
+        private void ThreadStartMethod() 
+        {
+            Console.WriteLine($"Starting new thread. Thread id {ThreadId}");
+        }
     }
 }

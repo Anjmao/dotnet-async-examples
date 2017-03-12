@@ -59,8 +59,9 @@ namespace ConsoleSamples
             //var result = await samples.FakeAsync2();
             //WriteLine($"{result}");
 
+            await samples.VeryBadBadBetterBestTaskUsage();
 
-            //var advanced = new AdvancedSamples();
+            var advanced = new AdvancedSamples();
 
             //var result = await advanced.TaskCompletionSourceFormEvents();
             //WriteLine($"Task completion source result: {result}");

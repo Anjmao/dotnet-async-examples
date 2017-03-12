@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Linq;
 using System.Threading;
@@ -10,7 +9,6 @@ using System.Runtime.CompilerServices;
 
 namespace ConsoleSamples
 {
-
     public class SomeOldLib
     {
         public delegate void EventHandler(string value);
@@ -44,7 +42,6 @@ namespace ConsoleSamples
             oldLib.Run("Hello");
             oldLib.OnComplete += (value) => tsc.SetResult(value);
             oldLib.OnError += (exception) => tsc.SetException(exception);
-
             return tsc.Task;
         }
 
@@ -56,13 +53,15 @@ namespace ConsoleSamples
                 source.CancelAfter(500);
 
                 await new HttpClient().GetAsync("http://dotnetcrowd.lt/", source.Token);
+
+                source.Dispose();
             }
             catch (TaskCanceledException ex)
             {
                 WriteLine($"Task cancellation exception: {ex}");
             }
         }
-
+        
         public async Task AwaitExtensions()
         {
             await TimeSpan.FromSeconds(1);
