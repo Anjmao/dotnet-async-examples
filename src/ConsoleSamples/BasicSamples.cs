@@ -14,13 +14,33 @@ namespace ConsoleSamples
     {
         private int ThreadId => Thread.CurrentThread.ManagedThreadId;
 
-        public async Task SimpleTask()
+        // 1. Show with exception
+        public Task SimpleTask()
+        {
+            var task = Task.Delay(100);
+
+            return task.ContinueWith((next) => {
+                WriteLine($"SimpleTask continue");
+            });
+        }
+
+        public Task<string> SimpleTaskWithResult()
+        {
+            Task<string> task = Task.FromResult("Hello");
+            return task.ContinueWith((next) =>
+            {
+                WriteLine($"SimpleTaskWithResult: {next.Result}");
+                return next.Result;
+            });
+        }
+
+        public async Task SimpleAsync()
         {
             await Task.Delay(100);
             WriteLine($"Hello after 100ms");
         }
 
-        public async Task<string> TaskWithResult()
+        public async Task<string> SimpleAsyncWithResult()
         {
             Task<string> task = Task.FromResult("Hello");
             string result = await task;
@@ -53,6 +73,40 @@ namespace ConsoleSamples
             int result = await cpuJob;
 
             WriteLine($"CPU job result: {result}");
+        }
+
+        public async Task StartingTasks()
+        {
+            // very bad
+            var thread = new Thread(new ThreadStart(ThreadStartMethod));
+            thread.Start();
+
+            // bad
+            var taskFromCtr = new Task(() => WriteLine($"Starting new task with ctr. Thread id {ThreadId}"));
+            taskFromCtr.Start();
+
+            // better
+            var taskFromFactory = Task.Factory.StartNew(() => WriteLine($"Starting task from factory {ThreadId}"));
+
+            // best
+            var taskFromRun = Task.Run(() => WriteLine($"Starting task from run {ThreadId}"));
+
+            await Task.WhenAll(taskFromCtr, taskFromFactory, taskFromRun);
+        }
+
+        public async Task MoreOnTaskFactoryStartNew() 
+        {
+            // StartNew does not support async delegates and have confusing TaskScheduler
+            await Task.Factory.StartNew(() => WriteLine($"Default StartNew Thread {ThreadId}"));
+
+            // reliably, predictably queue work to the thread pool
+            await Task.Factory.StartNew(() => WriteLine($"StartNew with correct overloads. Thread {ThreadId}"), 
+                    CancellationToken.None, 
+                    TaskCreationOptions.DenyChildAttach, 
+                    TaskScheduler.Default);
+            
+            // or just simple
+            await Task.Run(() => WriteLine($"Run {ThreadId}"));          
         }
 
         public async Task AwaitInOrder()
@@ -115,7 +169,7 @@ namespace ConsoleSamples
             WriteLine($"Starting on thread {ThreadId}");
             Task task = Task.Run(() =>
             {
-                Console.WriteLine($"Running on thread {ThreadId}");
+                WriteLine($"Running on thread {ThreadId}");
             });
             task.Wait();
             WriteLine($"Ended on thread {ThreadId}");
@@ -162,7 +216,7 @@ namespace ConsoleSamples
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                WriteLine(ex);
             }
         }
 
@@ -174,7 +228,7 @@ namespace ConsoleSamples
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                WriteLine(ex);
             }
         }
 
@@ -194,28 +248,36 @@ namespace ConsoleSamples
             return Task.Run(() => "One more fake async");
         }
 
-        public async Task VeryBadBadBetterBestTaskUsage()
+        public async Task FakeAsync3() 
         {
-            // very bad
-            var thread = new Thread(new ThreadStart(ThreadStartMethod));
-            thread.Start();
-
-            // bad
-            var taskFromCtr = new Task(() => Console.WriteLine($"Starting new task with ctr. Thread id {ThreadId}"));
-            taskFromCtr.Start();
-
-            // better
-            var taskFromFactory = Task.Factory.StartNew(() => Console.WriteLine($"Starting task from factory {ThreadId}"));
-
-            // best
-            var taskFromRun = Task.Run(() => Console.WriteLine($"Starting task from run {ThreadId}"));
-
-            await Task.WhenAll(taskFromCtr, taskFromFactory, taskFromRun);
+            var response = await new MyHelloAspNetRequestMediaFormatter().FormatResponseAsync("hello");
+            WriteLine($"Response {response}");
         }
 
         private void ThreadStartMethod() 
         {
-            Console.WriteLine($"Starting new thread. Thread id {ThreadId}");
+            WriteLine($"Starting new thread. Thread id {ThreadId}");
         }
     }
+
+    public class AspNetRequestMediaFormatter 
+    {
+        public virtual Task<string> FormatResponseAsync(string request) 
+        { 
+            throw new NotImplementedException("base");
+        }
+    }
+
+    public class MyHelloAspNetRequestMediaFormatter : AspNetRequestMediaFormatter
+    {
+        public override Task<string> FormatResponseAsync(string request) 
+        {
+            if (request == "hello") 
+            {
+                return Task.Run(() => "my hello");
+            }
+
+            return base.FormatResponseAsync(request);
+        }
+    }   
 }

@@ -13,15 +13,17 @@ namespace ConsoleSamples
 
         public static void Main(string[] args)
         {
+            WriteLine($"Start thread {ThreadId}");
             WriteLine("------------------------------------------");
             var timer = new Stopwatch();
             timer.Start();
             MainAsync().GetAwaiter().GetResult();
             timer.Stop();
             TimeSpan ts = timer.Elapsed;
-            string elapsedTime = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds}";
+            string elapsedTime = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds:000}";
             WriteLine("------------------------------------------");
             WriteLine($"End in {elapsedTime}");
+            WriteLine($"End thread {ThreadId}");
         }
 
         private static async Task MainAsync()
@@ -30,7 +32,11 @@ namespace ConsoleSamples
 
             //await samples.SimpleTask();
 
-            //var result = await samples.TaskWithResult();
+            //await samples.SimpleTaskWithResult();
+
+            //await samples.SimpleAsync();
+
+            //var result = await samples.SimpleAsyncWithResult();
             //WriteLine($"Task result: {result}");
 
             //await samples.ThreadContextChanges();
@@ -38,6 +44,10 @@ namespace ConsoleSamples
             //await samples.HttpRequest();
 
             //await samples.CpuJob();
+
+            //await samples.StartingTasks();
+
+            //await samples.MoreOnTaskFactoryStartNew();
 
             //await samples.AwaitInOrder();
 
@@ -59,7 +69,7 @@ namespace ConsoleSamples
             //var result = await samples.FakeAsync2();
             //WriteLine($"{result}");
 
-            await samples.VeryBadBadBetterBestTaskUsage();
+            //await samples.FakeAsync3();
 
             var advanced = new AdvancedSamples();
 
@@ -71,7 +81,6 @@ namespace ConsoleSamples
             //await advanced.AwaitExtensions();
 
             //await advanced.CustomAwaiter();
-
 
             //var performance = new PerformanceSamples();
 

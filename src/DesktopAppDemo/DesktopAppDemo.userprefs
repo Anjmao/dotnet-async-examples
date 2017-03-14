@@ -1,12 +1,12 @@
 ﻿<Properties StartupConfiguration="{C07BC287-26B6-41D8-BBAB-F670C560C35A}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="DesktopAppDemo/obj/Debug/DesktopAppDemo.DesktopAppDemoPage.xaml.g.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="DesktopAppDemo/DesktopAppDemoPage.xaml.cs">
     <Files>
-      <File FileName="iOS/Main.cs" Line="7" Column="1" />
+      <File FileName="iOS/Main.cs" Line="17" Column="1" />
       <File FileName="DesktopAppDemo/App.xaml" Line="1" Column="1" />
-      <File FileName="DesktopAppDemo/DesktopAppDemoPage.xaml.cs" Line="10" Column="27" />
+      <File FileName="DesktopAppDemo/DesktopAppDemoPage.xaml.cs" Line="26" Column="1" />
       <File FileName="DesktopAppDemo/packages.config" Line="1" Column="1" />
-      <File FileName="DesktopAppDemo/DesktopAppDemoPage.xaml" Line="4" Column="46" />
-      <File FileName="DesktopAppDemo/obj/Debug/DesktopAppDemo.DesktopAppDemoPage.xaml.g.cs" Line="28" Column="48" />
+      <File FileName="DesktopAppDemo/DesktopAppDemoPage.xaml" Line="3" Column="62" />
+      <File FileName="DesktopAppDemo/obj/Debug/DesktopAppDemo.DesktopAppDemoPage.xaml.g.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
